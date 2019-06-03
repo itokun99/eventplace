@@ -3,7 +3,7 @@ import { ContextConsumer } from '../../context/Context';
 import  { Icon } from 'react-icons-kit';
 import {ic_person} from 'react-icons-kit/md/ic_person';
 import { Link } from 'react-router-dom/cjs/react-router-dom';
-import { Setting as Config } from '../../services/Services';
+import API, { Setting as Config } from '../../services/Services';
 
 class Header extends Component {
     constructor(props){
@@ -26,11 +26,24 @@ class Header extends Component {
     }
 
     logout = () => {
-        localStorage.clear();
-        this.props.ContextAction({
-            type : "ADMIN_LOGOUT",
+        let loginData = this.props.ContextState.loginData;
+        
+        let params = {
+            appkey : loginData.appkey,
+            user_id : loginData.user_id,
+        }
+        API.adminLogout(params)
+        .then((result) => {
+            if(result.status){
+                localStorage.clear();
+                this.props.ContextAction({
+                    type : "ADMIN_LOGOUT",
+                })
+                this.props.history.push(Config.basePath);      
+            } else {
+                alert(result.message);
+            }
         })
-        this.props.history.push(Config.basePath);
     }
 
     render(){

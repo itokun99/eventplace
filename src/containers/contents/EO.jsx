@@ -4,6 +4,7 @@ import API, { Setting } from '../../services/Services';
 import { Link } from 'react-router-dom/cjs/react-router-dom';
 import Modal from '../../components/Modal';
 import { ContextConsumer } from '../../context/Context';
+import moment from 'moment';
 
 class EventOrganizer extends Component {
     state = {
@@ -21,8 +22,8 @@ class EventOrganizer extends Component {
     }
 
     handleEditButton = (eo_data) =>  {
-        this.props.history.push(`${Setting.basePath}admin/event-organizer/edit/${eo_data.eo_id}`, {
-            data : eo_data
+        this.props.history.push(`${Setting.basePath}event-organizer/edit/${eo_data.user_id}`, {
+            user_data : eo_data
         })
     }
 
@@ -36,6 +37,30 @@ class EventOrganizer extends Component {
             showModal : false,
             eventOrganizer : {}
         })
+    }
+
+    deleteUser = (user_id) => {
+        let loginData = this.props.ContextState.loginData;
+        let params = {
+            appkey : loginData.appkey,
+            user_id : user_id
+        }
+        let cof = window.confirm('Apakah anda yakin?');
+        if(cof){
+            API.deleteUser(params)
+            .then((result) => {
+                if(result.status){
+                    alert(result.message);
+                    this.getEventOrganizerData();
+                    this.handleCloseModal();
+                } else {
+                    console.log(result)
+                    alert(result.message);
+                }
+            })
+        } else {
+            return false;
+        }
     }
 
     getEventOrganizerData = () => {
@@ -62,6 +87,8 @@ class EventOrganizer extends Component {
     }
 
     componentDidMount(){
+        document.getElementById('panel-title').innerText = "List Event Organizer";
+        document.title = "List Event Organizer"
         this.getEventOrganizerData();
     }
 
@@ -100,7 +127,8 @@ class EventOrganizer extends Component {
                                                                 <td>{value.user_email}</td>
                                                                 <td>{value.eo_data.eo_name}</td>
                                                                 <td>{value.user_phone}</td>
-                                                                <td>{value.eo_status === "1" ? "Active" : "Deactive"}</td>
+                                                                <td>{moment(value.user_created_date).format("DD MMMM YYYY")}</td>
+                                                                <td>{value.eo_data.eo_status === "1" ? "Active" : "Deactive"}</td>
                                                             </tr>    
                                                         )
                                                     })
@@ -134,31 +162,39 @@ class EventOrganizer extends Component {
                                                 <td>
                                                     <img
                                                         width={200}
-                                                        src={`${Setting.isOnline ? Setting.onlinePath : Setting.offlinePath}${this.state.eventOrganizer.eo_pic}`}
+                                                        src={`${Setting.isOnline ? Setting.onlinePath : Setting.offlinePath}${this.state.eventOrganizer.user_pic}`}
                                                         alt={this.state.eventOrganizer.eo_name}
                                                         title={this.state.eventOrganizer.eo_name}
                                                     />
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td>Name</td>
-                                                <td>{this.state.eventOrganizer.eo_name}</td>
+                                                <td>Nama</td>
+                                                <td>{this.state.eventOrganizer.user_name}</td>
                                             </tr>
                                             <tr>
                                                 <td>Email</td>
-                                                <td>{this.state.eventOrganizer.eo_email}</td>
+                                                <td>{this.state.eventOrganizer.user_email}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Telepon</td>
+                                                <td>{this.state.eventOrganizer.user_phone}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Nama EO</td>
+                                                <td>{this.state.eventOrganizer.eo_data.eo_name}</td>
                                             </tr>
                                             <tr>
                                                 <td>Bio</td>
-                                                <td>{this.state.eventOrganizer.eo_bio}</td>
+                                                <td>{this.state.eventOrganizer.eo_data.eo_name}</td>
                                             </tr>
                                             <tr>
                                                 <td>Created</td>
-                                                <td>{this.state.eventOrganizer.eo_date}</td>
+                                                <td>{this.state.eventOrganizer.user_created_date}</td>
                                             </tr>
                                             <tr>
                                                 <td>Status</td>
-                                                <td>{this.state.eventOrganizer.eo_status === "1" ? "Active" : "Deactive"}</td>
+                                                <td>{this.state.eventOrganizer.eo_data.eo_status === "1" ? "Aktif" : "Tidak aktif"}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -167,7 +203,7 @@ class EventOrganizer extends Component {
                         </div>
                         <div className="modal-footer">
                             <button onClick = {() => this.handleEditButton(this.state.eventOrganizer)} className="btn btn-primary">Edit</button>
-                            <button className="ml-2 btn btn-danger">Delete</button>
+                            <button onClick = {() => this.deleteUser(this.state.eventOrganizer.user_id)} className="ml-2 btn btn-danger">Delete</button>
                             <button onClick={this.handleCloseModal} className="ml-2 btn btn-secondary">Close</button>
                         </div>
                     </Modal>

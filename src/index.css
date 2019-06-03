@@ -390,6 +390,7 @@ input[type="email"].form-control.is-invalid,
 input[type="password"].form-control.is-invalid,
 input[type="select"].form-control.is-invalid,
 textarea.form-control.is-invalid {
+  border-color: red;
 }
 
 .invalid-feedback {

@@ -4,7 +4,6 @@ import ContextProvider, { ContextConsumer } from '../context/Context';
 import Dashboard from '../containers/contents/Dashboard';
 import Login from '../containers/contents/Login';
 import Users from '../containers/contents/Users';
-import Events from '../containers/contents/Events';
 import EventOrganizer from '../containers/contents/EO';
 import { Setting } from '../services/Services';
 import AddEO from '../containers/contents/AddEO';
@@ -42,7 +41,7 @@ const Navigation = (props) => {
                         <Route path =  {`${Setting.basePath}event/edit/:event_id`} component={EventEdit}  />
                         <Route path =  {`${Setting.basePath}event-organizer`} exact component={EventOrganizer}  />
                         <Route path =  {`${Setting.basePath}event-organizer/add`} component={AddEO}  />
-                        <Route path =  {`${Setting.basePath}event-organizer/edit/:eo_id`} component={EditEO}  />
+                        <Route path =  {`${Setting.basePath}event-organizer/edit/:user_id`} component={EditEO}  />
                     </>
                 :
                     <>

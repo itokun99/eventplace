@@ -46,6 +46,12 @@ const adminLogin = (data = {}) => {
     return request(path, method, data);
 }
 
+const adminLogout = (data = {}) => {
+    let path = 'api/admin/logout'
+    let method = "POST";
+    return request(path, method, data);
+}
+
 const eventsGet = (data = {}) => {
     let params = 0;
     for(let key in data){
@@ -103,19 +109,28 @@ const getEventOrganizer = (data = {}) => {
     for(let key in data){
         params++;
     }
-    let path = `api/users/event_organizer${params > 0 ? "?" : ""}${typeof(data.appkey) !== "undefined" ? params > 1 ? "&appkey="+data.appkey : "appkey="+data.appkey : ""}${typeof(data.user_id) !== "undefined" ? params > 1 ? "&user_id="+data.user_id : "user_id="+data.user_id : ""}`;
+    let appkey = `${typeof(data.appkey) !== "undefined" ? params > 1 ? "&appkey="+data.appkey : "appkey="+data.appkey : ""}`;
+    let user_id = `${typeof(data.user_id) !== "undefined" ? params > 1 ? "&user_id="+data.user_id : "user_id="+data.user_id : ""}`;
+    let path = `api/users/event_organizer${params > 0 ? "?" : ""}${appkey}${user_id}`;
     
     return request(path);
 }
 
+const deleteUser = (data = {}) => {
+    let path = 'api/users/deleteuser';
+    let method = "POST";
+    return request(path, method, data);
+}
+
+
 const createEventOrganizer = (data = {}) => {
-    let path = "api/events/organizer";
+    let path = "api/users/event_organizer";
     let method = "POST";
     return request(path, method, data);
 }
 
 const updateEventOrganizer = (data = {}) => {
-    let path = "api/events/organizer";
+    let path = "api/users/event_organizer";
     let method = "PUT";
     return request(path, method, data);
 }
@@ -134,6 +149,7 @@ const uploadEoPic = (data = {}) => {
 
 const API  = {
     adminLogin,
+    adminLogout,
     eventsGet,
     eventPost,
     eventUploadPoster,
@@ -146,6 +162,7 @@ const API  = {
     updateEventOrganizer,
     deleteEventOrganizer,
     uploadEoPic,
+    deleteUser,
 }
 
 export default API;
